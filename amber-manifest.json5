@@ -4,19 +4,22 @@
     type: "object",
     properties: {},
     required: [],
-    additionalProperties: true
+    additionalProperties: false
   },
   program: {
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
     entrypoint: "python purple_server.py --host 0.0.0.0 --port 9009",
     network: {
       endpoints: [
-        { name: "endpoint", port: 9009 }
+        { name: "a2a", port: 9009 }
       ]
     }
   },
   provides: {
-    a2a: { kind: "a2a", endpoint: "endpoint" }
+    a2a: { kind: "a2a", endpoint: "a2a" }
   },
-  exports: { a2a: "a2a" }
+  exports: { a2a: "a2a" },
+  metadata: {
+    participant_roles: ["agent"]
+  }
 }
