@@ -1,20 +1,39 @@
 {
-  "$schema": "https://raw.githubusercontent.com/RDI-Foundation/amber/main/schema.json",
-  "agent": {
-    "name": "Strain Kallfu Zero - Pi-Bench",
-    "description": "Multi-layer purple agent for pi-bench policy compliance evaluation. Uses DeepSeek V3.2 + Llama 4 Maverick with deterministic pre/post pipeline, adversarial input detection, and JSON repair.",
-    "image": "ghcr.io/JoseFierroB/strain-kallfu-s3-pibench:latest",
-    "a2a": {
-      "port": 9009
+  manifest_version: "0.1.0",
+
+  config_schema: {
+    type: "object",
+    properties: {
+      nebius_api_key: { type: "string", secret: true },
+      openai_api_key: { type: "string", secret: true },
     },
-    "env": [
-      "NEBIUS_API_KEY",
-      "OPENAI_API_KEY"
-    ]
+    required: [],
+    additionalProperties: false,
   },
-  "exports": {
-    "agent": {
-      "a2a": true
-    }
-  }
+
+  slots: {
+    proxy: { kind: "a2a", optional: true },
+  },
+
+  program: {
+    image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
+    entrypoint: "python purple_server.py --host 0.0.0.0 --port 9009",
+
+    env: {
+      NEBIUS_API_KEY: "${config.nebius_api_key}",
+      OPENAI_API_KEY: "${config.openai_api_key}",
+    },
+
+    network: {
+      endpoints: [
+        { name: "a2a_endpoint", port: 9009 },
+      ],
+    },
+  },
+
+  provides: {
+    a2a: { kind: "a2a", endpoint: "a2a_endpoint" },
+  },
+
+  exports: { a2a: "a2a" },
 }
