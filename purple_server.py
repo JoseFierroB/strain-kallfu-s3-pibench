@@ -30,9 +30,35 @@ from cerebro_1 import llm_call
 from cerebro_2 import (
     check_decision_consistency,
     format_a2a_response,
-    format_error,
     validate_tool_calls,
 )
+
+
+def _jsonrpc_success(request_id: str | None, part: dict[str, Any]) -> dict[str, Any]:
+    """Wrap a part in a JSON-RPC 2.0 success response."""
+    return {
+        "jsonrpc": "2.0",
+        "id": request_id or str(uuid.uuid4()),
+        "result": {
+            "status": {
+                "message": {
+                    "role": "agent",
+                    "parts": [part],
+                },
+            },
+        },
+    }
+
+
+def _jsonrpc_error(
+    request_id: str | None, code: int, message: str
+) -> dict[str, Any]:
+    """JSON-RPC 2.0 error response."""
+    return {
+        "jsonrpc": "2.0",
+        "id": request_id or str(uuid.uuid4()),
+        "error": {"code": code, "message": message},
+    }
 
 logger = logging.getLogger(__name__)
 
@@ -78,7 +104,7 @@ async def message_send(request: Request) -> JSONResponse:
 
     method = body.get("method", "")
     if method != "message/send":
-        return JSONResponse(content=format_error(
+        return JSONResponse(content=_jsonrpc_error(
             body.get("id"), -32601, f"Unknown method: {method}"
         ))
 
@@ -87,7 +113,7 @@ async def message_send(request: Request) -> JSONResponse:
     parts = message.get("parts", [])
 
     if not parts:
-        return JSONResponse(content=format_error(
+        return JSONResponse(content=_jsonrpc_error(
             body.get("id"), -32602, "No message parts"
         ))
 
@@ -133,10 +159,10 @@ def _handle_bootstrap(request_id: str | None, data: dict[str, Any]) -> dict[str,
         len(tools),
     )
 
-    return format_a2a_response(
-        {"content": "bootstrapped"},
-        request_id,
-    )
+    return _jsonrpc_success(request_id, {
+        "kind": "data",
+        "data": {"bootstrapped": True, "context_id": context_id},
+    })
 
 
 async def _handle_turn(
@@ -149,7 +175,7 @@ async def _handle_turn(
     if context_id:
         session = _sessions.get(str(context_id))
         if session is None:
-            return format_error(
+            return _jsonrpc_error(
                 request_id, -32004,
                 f"Unknown bootstrap context_id: {context_id}"
             )
@@ -183,7 +209,7 @@ async def _handle_turn(
         )
     except Exception as exc:
         logger.exception("LLM call failed after all fallbacks")
-        return format_error(request_id, -32000, str(exc))
+        return _jsonrpc_error(request_id, -32000, str(exc))
 
     validated = validate_tool_calls(raw_response, tools)
 
