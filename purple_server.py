@@ -79,12 +79,36 @@ async def agent_card() -> JSONResponse:
             "Multi-layer purple agent with deterministic pre/post pipeline "
             "and DeepSeek V3.2 + Llama 4 Maverick fallback. "
             "Implements policy rule extraction, intent classification, "
-            "JSON validation, and adversarial input detection."
+            "JSON validation, and adversarial input detection. "
+            "Pi-Bench bootstrap extension support."
         ),
         "url": _card_url,
         "version": "1.0.0",
-        "extensions": [POLICY_BOOTSTRAP_EXTENSION],
-        "capabilities": {"message": True},
+        "protocolVersion": "0.3.0",
+        "preferredTransport": "JSONRPC",
+        "capabilities": {
+            "streaming": False,
+            "pushNotifications": False,
+            "stateTransitionHistory": False,
+            "extensions": [POLICY_BOOTSTRAP_EXTENSION],
+        },
+        "defaultInputModes": ["text"],
+        "defaultOutputModes": ["text"],
+        "skills": [
+            {
+                "id": "pi-bench-policy-compliance",
+                "name": "Pi-Bench Policy Compliance",
+                "description": (
+                    "Evaluates policy compliance using multi-layer pipeline "
+                    "with deterministic pre/post processing"
+                ),
+                "tags": ["policy", "compliance", "pi-bench"],
+                "examples": [
+                    "Evaluate whether a refund request complies with FINRA policy",
+                    "Determine if access should be granted under IT helpdesk rules",
+                ],
+            }
+        ],
     })
 
 
