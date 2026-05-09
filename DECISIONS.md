@@ -95,6 +95,13 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 | 2026-05-08 | scen_010_lockup_denial_grounding | DENY | 22.0s | 0% | Scripted user failed (OpenAI key) |
 | 2026-05-08 | scen_010_lockup_denial_grounding | NONE | 8.6s | 56.2% | Post-fix: bootstrap OK, agent disconnected mid-turn. Decision=NONE → record_decision not called. Need to debug DeepSeek function calling. |
 
+## Decision 11: Manifest must be v0.1.0 format for API to populate docker_image
+
+**Date:** 2026-05-09
+**Context:** AgentBeats API returned `docker_image: null` for our agent. This caused manual submission to fail because `generate_compose.py` couldn't resolve our ID to a Docker image. Quick Submit works because it uses the manifest URL directly.
+**Decision:** Changed manifest to minimal v0.1.0 format matching pi-bench green agent: `manifest_version: "0.1.0"` + `program.image` + `provides.a2a` + `exports: { a2a: "a2a" }`. Removed config_schema, slots, and env to eliminate parsing edge cases.
+**Impact:** Registration page should parse the manifest correctly and populate docker_image in the API. Manual submission via `run-scenario.yml` will work.
+
 ## Submission Log
 
 | Date | Score | Notes |
