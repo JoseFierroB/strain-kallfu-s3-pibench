@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/RDI-Foundation/amber/main/schema.json",
+  "agent": {
+    "name": "Strain Kallfu Zero - Pi-Bench",
+    "description": "Multi-layer purple agent for pi-bench policy compliance evaluation. Uses DeepSeek V3.2 + Llama 4 Maverick with deterministic pre/post pipeline, adversarial input detection, and JSON repair.",
+    "image": "ghcr.io/JoseFierroB/strain-kallfu-s3-pibench:latest",
+    "a2a": {
+      "port": 9009
+    },
+    "env": [
+      "NEBIUS_API_KEY",
+      "OPENAI_API_KEY"
+    ]
+  },
+  "exports": {
+    "agent": {
+      "a2a": true
+    }
+  }
+}
