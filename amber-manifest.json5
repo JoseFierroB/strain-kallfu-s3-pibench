@@ -1,5 +1,11 @@
 {
   manifest_version: "0.1.0",
+  config_schema: {
+    type: "object",
+    properties: {},
+    required: [],
+    additionalProperties: true
+  },
   program: {
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
     entrypoint: "python purple_server.py --host 0.0.0.0 --port 9009",
