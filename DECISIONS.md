@@ -95,7 +95,13 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 | 2026-05-08 | scen_010_lockup_denial_grounding | DENY | 22.0s | 0% | Scripted user failed (OpenAI key) |
 | 2026-05-08 | scen_010_lockup_denial_grounding | NONE | 8.6s | 56.2% | Post-fix: bootstrap OK, agent disconnected mid-turn. Decision=NONE → record_decision not called. Need to debug DeepSeek function calling. |
 
-## Decision 11: Manifest must be v0.1.0 format for API to populate docker_image
+## Decision 12: Agent card must include all A2A v0.3 required fields
+
+**Date:** 2026-05-09
+**Context:** Quick Submit consistently failed with "Timeout: 1/2 agents ready" despite both containers responding 200 OK to agent card requests. Investigation revealed the gateway uses `a2a-sdk==0.3.22` which validates the full Pydantic `AgentCard` model. Our card was missing 3 required fields: `defaultInputModes`, `defaultOutputModes`, and `skills`.
+**Decision:** Added all required fields to agent card. Moved `extensions` inside `capabilities`. Fixed entrypoint format to array to avoid Amber concatenation with Dockerfile ENTRYPOINT.
+**Root cause:** The gateway's `A2ACardResolver.get_agent_card()` does NOT just check HTTP 200 — it calls `AgentCard.model_validate()` which requires all Pydantic fields. The green agent (platform-provided) serves a valid card. Our purple agent didn't.
+**Impact:** Quick Submit should now complete readiness check. Should see "2/2 agents ready" instead of "1/2".
 
 **Date:** 2026-05-09
 **Context:** AgentBeats API returned `docker_image: null` for our agent. This caused manual submission to fail because `generate_compose.py` couldn't resolve our ID to a Docker image. Quick Submit works because it uses the manifest URL directly.
