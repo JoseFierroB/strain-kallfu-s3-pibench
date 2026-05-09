@@ -1,14 +1,16 @@
 {
-  agent: {
-    name: "Strain Kallfu Zero - Pi-Bench",
-    description: "Multi-layer purple agent with deterministic pre/post pipeline. Uses DeepSeek V3.2 + Llama 4 Maverick fallback. Policy rule extraction, intent classification, JSON validation, adversarial input detection.",
+  manifest_version: "0.1.0",
+  program: {
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
-    a2a: { port: 9009 },
-    env: ["NEBIUS_API_KEY", "OPENAI_API_KEY"],
+    entrypoint: "python purple_server.py --host 0.0.0.0 --port 9009",
+    network: {
+      endpoints: [
+        { name: "endpoint", port: 9009 }
+      ]
+    }
   },
-  exports: {
-    agent: {
-      a2a: true,
-    },
+  provides: {
+    a2a: { kind: "a2a", endpoint: "endpoint" }
   },
+  exports: { a2a: "a2a" }
 }
