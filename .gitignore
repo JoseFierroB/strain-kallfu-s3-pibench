@@ -4,3 +4,4 @@ __pycache__/
 .env
 *.egg-info/
 dist/
+debug_toolcall.py

@@ -18,21 +18,21 @@ import litellm
 
 logger = logging.getLogger(__name__)
 
+_NEBIUS_BASE = os.environ.get(
+    "NEBIUS_API_BASE", "https://api.tokenfactory.us-central1.nebius.com/v1"
+)
+
 MODEL_CHAIN = [
     {
         "model": "nebius/deepseek-ai/DeepSeek-V3.2-fast",
-        "api_base": os.environ.get(
-            "NEBIUS_API_BASE", "https://api.tokenfactory.nebius.com/v1"
-        ),
+        "api_base": _NEBIUS_BASE,
         "api_key": os.environ.get("NEBIUS_API_KEY", ""),
         "temperature": 0.0,
         "base_delay": 1.0,
     },
     {
-        "model": "nebius/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
-        "api_base": os.environ.get(
-            "NEBIUS_API_BASE", "https://api.tokenfactory.nebius.com/v1"
-        ),
+        "model": "nebius/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+        "api_base": _NEBIUS_BASE,
         "api_key": os.environ.get("NEBIUS_API_KEY", ""),
         "temperature": 0.1,
         "base_delay": 1.5,

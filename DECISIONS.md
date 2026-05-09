@@ -59,7 +59,26 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 
 ---
 
-## Decision 7: Bootstrap response format must match pi-bench spec
+## Decision 8: Strengthen system prompt for function calling
+
+**Date:** 2026-05-08
+**Context:** DeepSeek V3.2 was responding with text explanations instead of calling record_decision. The system prompt used conditional language ("When... call record_decision").
+**Decision:** Changed system prompt to imperative: "You MUST use the provided tools. Never just describe what you would do — actually call the tools." Added explicit DECISION PROTOCOL section with 5 numbered steps.
+**Impact:** Expected to force tool calling behavior. Tested locally on Bootstrap but full A2A assessment pending Quick Submit.
+
+## Decision 9: Fix API base URL to us-central1 region
+
+**Date:** 2026-05-08
+**Context:** Original Nebius code used `api.tokenfactory.us-central1.nebius.com/v1`. Code defaulted to global endpoint.
+**Decision:** Changed default to us-central1 for lower latency. Still overridable via NEBIUS_API_BASE env var.
+**Impact:** Lower latency for LLM calls.
+
+## Decision 10: Remove FP8 suffix from Llama 4 model name
+
+**Date:** 2026-05-08
+**Context:** Model name `meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8` may not be valid in LiteLLM.
+**Decision:** Changed to `meta-llama/Llama-4-Maverick-17B-128E-Instruct` without FP8 suffix.
+**Impact:** Fallback model should work correctly if DeepSeek fails.
 
 **Date:** 2026-05-08
 **Context:** Initial implementation returned `{"content": "bootstrapped"}` without context_id. Pi-bench's `parse_bootstrap_response` expects `{"bootstrapped": true, "context_id": "uuid"}` in the data field.
