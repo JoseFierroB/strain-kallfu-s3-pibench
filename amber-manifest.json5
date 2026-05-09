@@ -1,39 +1,14 @@
 {
-  manifest_version: "0.1.0",
-
-  config_schema: {
-    type: "object",
-    properties: {
-      nebius_api_key: { type: "string", secret: true },
-      openai_api_key: { type: "string", secret: true },
-    },
-    required: [],
-    additionalProperties: false,
-  },
-
-  slots: {
-    proxy: { kind: "a2a", optional: true },
-  },
-
-  program: {
+  agent: {
+    name: "Strain Kallfu Zero - Pi-Bench",
+    description: "Multi-layer purple agent with deterministic pre/post pipeline. Uses DeepSeek V3.2 + Llama 4 Maverick fallback. Policy rule extraction, intent classification, JSON validation, adversarial input detection.",
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
-    entrypoint: "python purple_server.py --host 0.0.0.0 --port 9009",
-
-    env: {
-      NEBIUS_API_KEY: "${config.nebius_api_key}",
-      OPENAI_API_KEY: "${config.openai_api_key}",
-    },
-
-    network: {
-      endpoints: [
-        { name: "a2a_endpoint", port: 9009 },
-      ],
+    a2a: { port: 9009 },
+    env: ["NEBIUS_API_KEY", "OPENAI_API_KEY"],
+  },
+  exports: {
+    agent: {
+      a2a: true,
     },
   },
-
-  provides: {
-    a2a: { kind: "a2a", endpoint: "a2a_endpoint" },
-  },
-
-  exports: { a2a: "a2a" },
 }
