@@ -59,8 +59,26 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 
 ---
 
+## Decision 7: Bootstrap response format must match pi-bench spec
+
+**Date:** 2026-05-08
+**Context:** Initial implementation returned `{"content": "bootstrapped"}` without context_id. Pi-bench's `parse_bootstrap_response` expects `{"bootstrapped": true, "context_id": "uuid"}` in the data field.
+**Decision:** Changed `_handle_bootstrap` to return `{"bootstrapped": True, "context_id": context_id}` via `_jsonrpc_success`.
+**Impact:** Bootstrap warning eliminated. Session caching works correctly.
+
+---
+
+## Test Results
+
+| Date | Scenario | Decision | Time | Score | Notes |
+|---|---|---|---|---|---|
+| 2026-05-08 | scen_010_lockup_denial_grounding | DENY | 20.7s | 0% | Pre-fix: bootstrap missing context_id |
+| 2026-05-08 | scen_010_lockup_denial_grounding | DENY | 22.0s | 0% | Scripted user failed (OpenAI key) |
+| 2026-05-08 | scen_010_lockup_denial_grounding | NONE | 8.6s | 56.2% | Post-fix: bootstrap OK, agent disconnected mid-turn. Decision=NONE → record_decision not called. Need to debug DeepSeek function calling. |
+
 ## Submission Log
 
 | Date | Score | Notes |
 |---|---|---|
-| (pending) | - | Initial submission |
+| (pending) | - | Initial Quick Submit to AgentBeats |
+
