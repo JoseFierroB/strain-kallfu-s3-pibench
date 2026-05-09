@@ -261,7 +261,7 @@ def main() -> None:
     args = parser.parse_args()
 
     _seed = args.seed
-    _card_url = args.card_url
+    _card_url = args.card_url or f"http://{args.host}:{args.port}/"
 
     logging.basicConfig(
         level=getattr(logging, args.log_level.upper(), logging.INFO),
