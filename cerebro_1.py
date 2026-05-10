@@ -1,9 +1,8 @@
 """
-Cerebro 1 — LLM Core (1 llamada LiteLLM con fallback chain)
+Cerebro 1 — LLM Core (1 llamada LiteLLM con fallback simplificado)
 
-Primary:   DeepSeek V3.2 Fast via Nebius
-Fallback1: Llama 4 Maverick via Nebius
-Fallback2: GPT-4o-mini via OpenAI
+Primary:   DeepSeek V3.2 Fast via Nebius (tool_choice=required)
+Fallback:  GPT-4o-mini via OpenAI
 """
 
 from __future__ import annotations
