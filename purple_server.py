@@ -90,7 +90,7 @@ async def agent_card() -> JSONResponse:
             "streaming": False,
             "pushNotifications": False,
             "stateTransitionHistory": False,
-            "extensions": [POLICY_BOOTSTRAP_EXTENSION],
+            "extensions": [{"uri": POLICY_BOOTSTRAP_EXTENSION}],
         },
         "defaultInputModes": ["text"],
         "defaultOutputModes": ["text"],
