@@ -7,7 +7,7 @@
       OPENAI_API_KEY: { type: "string", secret: true }
     },
     required: [],
-    additionalProperties: false
+    additionalProperties: true
   },
   program: {
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
