@@ -28,14 +28,7 @@ MODEL_CHAIN = [
         "api_base": _NEBIUS_BASE,
         "api_key": os.environ.get("NEBIUS_API_KEY", ""),
         "temperature": 0.0,
-        "base_delay": 1.0,
-    },
-    {
-        "model": "nebius/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
-        "api_base": _NEBIUS_BASE,
-        "api_key": os.environ.get("NEBIUS_API_KEY", ""),
-        "temperature": 0.1,
-        "base_delay": 1.5,
+        "base_delay": 0.5,
     },
     {
         "model": "openai/gpt-4o-mini",
@@ -70,6 +63,7 @@ async def llm_call(
                 kwargs["api_key"] = config["api_key"]
             if tools:
                 kwargs["tools"] = tools
+                kwargs["tool_choice"] = "required"
             if seed is not None:
                 kwargs["seed"] = seed
 
@@ -86,7 +80,7 @@ async def llm_call(
                 "LLM attempt %d failed (%s): %s", i + 1, config["model"], last_error
             )
             if i < len(MODEL_CHAIN) - 1:
-                delay = config["base_delay"] * (2 ** i)
+                delay = config["base_delay"] * (i + 1)
                 time.sleep(delay)
                 continue
 

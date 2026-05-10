@@ -108,7 +108,23 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 **Decision:** Changed manifest to minimal v0.1.0 format matching pi-bench green agent: `manifest_version: "0.1.0"` + `program.image` + `provides.a2a` + `exports: { a2a: "a2a" }`. Removed config_schema, slots, and env to eliminate parsing edge cases.
 **Impact:** Registration page should parse the manifest correctly and populate docker_image in the API. Manual submission via `run-scenario.yml` will work.
 
-## Submission Log
+## Run Results
+
+| Date | Overall | Compliance | Time | Notes |
+|---|---|---|---|---|
+| 2026-05-10 | 33.5% | 0% | 570s | No API keys. All LLM calls failed. |
+| 2026-05-10 | 73.5% | 18.3% | 9276s | **API keys working via config_schema.** DeepSeek IS calling record_decision (Under-Refusal 60% vs 100%). Forbidden Attempt Rate 2.8% (best of all competitors — Cerebro 2 blocking). Policy Understanding 78%. Main issue: fallback chain thrashing + decision quality. |
+
+## Decision 13: Simplify fallback chain + add domain prompts
+
+**Date:** 2026-05-10
+**Context:** Run #2 at 73.5% Overall showed DeepSeek IS making tool calls but latency is 9276s due to fallback chain (DeepSeek → Llama 4 → GPT-4o-mini with exponential backoff). Decision quality is moderate — agent ALLOWs when should DENY (Under-Refusal 60%) and DENYs when should ALLOW (Over-Refusal 63.6%).
+**Decision:** 
+1. Removed Llama 4 Maverick from fallback chain. DeepSeek → GPT-4o-mini only. Reduced backoff to linear.
+2. Added `tool_choice="required"` when tools available.
+3. Added domain-specific decision trees (retail/helpdesk/finra) to system prompt, adapted from STRIDE's approach but recortados to fit our architecture.
+4. Strengthened decision rules (ALLOW vs DENY vs ESCALATE) in universal prompt.
+**Expected impact:** Latency reduced by ~50%. Decision quality improved by ~10-15%.
 
 | Date | Score | Notes |
 |---|---|---|
