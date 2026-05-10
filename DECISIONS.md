@@ -113,7 +113,20 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 | Date | Overall | Compliance | Time | Notes |
 |---|---|---|---|---|
 | 2026-05-10 | 33.5% | 0% | 570s | No API keys. All LLM calls failed. |
-| 2026-05-10 | 73.5% | 18.3% | 9276s | **API keys working via config_schema.** DeepSeek IS calling record_decision (Under-Refusal 60% vs 100%). Forbidden Attempt Rate 2.8% (best of all competitors — Cerebro 2 blocking). Policy Understanding 78%. Main issue: fallback chain thrashing + decision quality. |
+| 2026-05-10 | 73.5% | 18.3% | 9276s | API keys working via config_schema. DeepSeek calling tools. Forbidden Attempt 2.8%. Policy Understanding 78%. Main issue: fallback chain + decision quality. |
+| 2026-05-10 | 73.5% | 18.3% | 15387s | P1+P2 applied. Over-Refusal improved 63.6%→9.1% (PERMITTED framework working). Escalation doubled 17.8%→37.8%. But Under-Refusal worse 60%→86.7% (BLOCKED too weak). Forbidden Attempt up 2.8%→11.3% (tool_choice=required side effect). Net Overall unchanged — balance problem identified. |
+
+## Decision 15: Rebalance decision framework with explicit MUST DENY + Reflection Loop
+
+**Date:** 2026-05-10
+**Context:** Run #3 showed the Reasoning Frameworks work but are unbalanced — BLOCKED conditions too weak (Under-Refusal 86.7%, should be <50%) while PERMITTED works perfectly (Over-Refusal 9.1%, was 63.6%). Forbidden Attempt increased because tool_choice="required" forces tool calls even when inappropriate.
+**Decision:**
+1. **P4a:** Rewrote Decision Framework as ordered steps (Block→Flag→Permit→Conflict) with explicit MUST DENY for blocking conditions.
+2. **P4b:** Added pre-ALLOW checklist — 5 conditions must all pass before allowing.
+3. **P4c:** Simplified Cerebro 2 validation logging to debug Forbidden Attempt sources.
+4. **P4d:** Recortado domain prompts ~60% (retail: 2200→800 chars, helpdesk: 2100→700, finra: 2400→800). Expected latency reduction ~30%.
+5. **P5:** Added Reflection Loop (Tool-MVR inspired): when no_record_decision_found detected, re-prompts with explicit error correction. Cost: ~$0.18 extra per run, +3-5 min latency.
+**Expected impact:** Under-Refusal 86.7%→40-50%, Forbidden Attempt 11.3%→<5%, Overall 73.5%→78-85%, Time 15387s→8000-10000s.
 
 ## Decision 13: Simplify fallback chain + add domain prompts
 

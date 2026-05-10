@@ -238,6 +238,32 @@ async def _handle_turn(
     validated = validate_tool_calls(raw_response, tools)
 
     flags = check_decision_consistency(validated, intent_info, benchmark_context)
+
+    # P4c+P5: Reflection Loop — re-prompt if tool calls missing or invalid
+    if ("no_record_decision_found" in flags or "no_valid_tool_calls" in flags) and tools:
+        logger.info("Reflection: re-prompting for tool call correction")
+        correction_msg = {
+            "role": "system",
+            "content": (
+                "ERROR: Your previous response had no valid tool call. "
+                "You MUST call record_decision NOW with one of: ALLOW, "
+                "ALLOW-CONDITIONAL, DENY, or ESCALATE. Base your decision "
+                "strictly on the policy rules provided. Use the exact "
+                "decision that the policy requires."
+            ),
+        }
+        try:
+            raw_response = await llm_call(
+                messages=model_messages + [correction_msg],
+                tools=tools,
+                seed=_seed,
+                max_tokens=512,
+            )
+            validated = validate_tool_calls(raw_response, tools)
+            flags = check_decision_consistency(validated, intent_info, benchmark_context)
+        except Exception:
+            logger.warning("Reflection loop failed, using original response")
+
     if flags or injection_info.get("anomaly_score", 0) > 0:
         logger.info(
             "Turn flags: decision=%s injection_score=%s",
