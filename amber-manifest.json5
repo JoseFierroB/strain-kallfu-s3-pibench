@@ -2,7 +2,10 @@
   manifest_version: "0.1.0",
   config_schema: {
     type: "object",
-    properties: {},
+    properties: {
+      NEBIUS_API_KEY: { type: "string", secret: true },
+      OPENAI_API_KEY: { type: "string", secret: true }
+    },
     required: [],
     additionalProperties: false
   },
@@ -10,8 +13,8 @@
     image: "ghcr.io/josefierrob/strain-kallfu-s3-pibench:main",
     entrypoint: ["python", "purple_server.py", "--host", "0.0.0.0", "--port", "9009"],
     env: {
-      NEBIUS_API_KEY: "v1.CmQKHHN0YXRpY2tleS1lMDBzNGt4enBlZngxbW14aGISIXNlcnZpY2VhY2NvdW50LWUwMG1iMHdjcnkzaGhqanlhbjIMCPO5-s8GELCs55UBOgwI8rySmwcQwMiCkQNAAloDZTAw.AAAAAAAAAAFbrMlYr6Fkhufc6Sm80gqM1ODnhrdeH0S3r0H5K-9gqcPHy01o8SdGJECunSphqqWlOU-El0BaT608AcM3490K",
-      OPENAI_API_KEY: "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",
+      NEBIUS_API_KEY: "${config.NEBIUS_API_KEY}",
+      OPENAI_API_KEY: "${config.OPENAI_API_KEY}"
     },
     network: {
       endpoints: [
