@@ -126,21 +126,6 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 4. Strengthened decision rules (ALLOW vs DENY vs ESCALATE) in universal prompt.
 **Expected impact:** Latency reduced by ~50%. Decision quality improved by ~10-15%.
 
-## Decision 14: Rewrite domain prompts as original Reasoning Frameworks
-
-**Date:** 2026-05-10
-**Context:** Domain prompts were adapted from STRIDE's decision tree structure. To ensure originality and avoid plagiarism concerns, rewrote them as "Reasoning Frameworks" — principle-based guidance rather than prescriptive decision trees.
-**Key differentiators from STRIDE:**
-- STRIDE: BLOCK A/B/C/D naming with specific clause IDs → Us: BLOCKED/RESTRICTED/FLAGGED/CONFLICTED/PERMITTED categories based on contract compliance theory (from ABC paper)
-- STRIDE: Pre-written decision tree (tells LLM WHAT to decide) → Us: Verification checklist (teaches LLM HOW to reason)
-- STRIDE: Hardcoded clause IDs → Us: LLM extracts clause IDs from benchmark_context (fair play)
-- STRIDE: Domain-specific rule blocks → Us: Domain-specific reasoning dimensions
-**Research backing:**
-- Agent Behavioral Contracts (ABC): Design-by-Contract for AI agents, contract = (Preconditions, Invariants, Governance, Recovery)
-- ToolGuard (IBM, EMNLP 2025): Two-phase policy enforcement — compile policy to guard code, enforce at runtime
-- Anthropic strict tool use: `strict: true` on tool definitions ensures schema conformance
-- Berkeley Function Calling Leaderboard (BFCL, 310 citations): AST-based validation for tool calls
-
 ## State-of-the-Art Research Bibliography
 
 | Paper | Key Finding | Application |
@@ -153,17 +138,4 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 | "PhantomPolicy" (Apr 2026) | Policy-invisible violations. Sentinel counterfactual graph simulation | Advanced: graph-based enforcement |
 | "ToolACE" (ICLR 2025, 148 citations) | Winning approach for function calling with AST validation | Tool call validation |
 | Antiquoia strict tool use | `strict: true` ensures tool calls match schema | DeepSeek function calling reliability |
-
-**Date:** 2026-05-10
-**Context:** Run #2 at 73.5% Overall showed DeepSeek IS making tool calls but latency is 9276s due to fallback chain (DeepSeek → Llama 4 → GPT-4o-mini with exponential backoff). Decision quality is moderate — agent ALLOWs when should DENY (Under-Refusal 60%) and DENYs when should ALLOW (Over-Refusal 63.6%).
-**Decision:** 
-1. Removed Llama 4 Maverick from fallback chain. DeepSeek → GPT-4o-mini only. Reduced backoff to linear.
-2. Added `tool_choice="required"` when tools available.
-3. Added domain-specific Reasoning Frameworks (retail/helpdesk/finra) to system prompt. Principle-based guidance using BLOCKED/RESTRICTED/FLAGGED/CONFLICTED/PERMITTED taxonomy. Research basis: ABC (arXiv:2602.22302), ToolGuard (arXiv:2507.16459), PAE (arXiv:2603.03116).
-4. Strengthened decision rules (ALLOW vs DENY vs ESCALATE) in universal prompt.
-**Expected impact:** Latency reduced by ~50%. Decision quality improved by ~10-15%.
-
-| Date | Score | Notes |
-|---|---|---|
-| (pending) | - | Initial Quick Submit to AgentBeats |
 
