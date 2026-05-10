@@ -122,7 +122,7 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 **Decision:** 
 1. Removed Llama 4 Maverick from fallback chain. DeepSeek → GPT-4o-mini only. Reduced backoff to linear.
 2. Added `tool_choice="required"` when tools available.
-3. Added domain-specific decision trees (retail/helpdesk/finra) to system prompt, adapted from STRIDE's approach but recortados to fit our architecture.
+3. Added domain-specific Reasoning Frameworks (retail/helpdesk/finra) to system prompt. Principle-based guidance using BLOCKED/RESTRICTED/FLAGGED/CONFLICTED/PERMITTED taxonomy. Research basis: ABC (arXiv:2602.22302), ToolGuard (arXiv:2507.16459), PAE (arXiv:2603.03116).
 4. Strengthened decision rules (ALLOW vs DENY vs ESCALATE) in universal prompt.
 **Expected impact:** Latency reduced by ~50%. Decision quality improved by ~10-15%.
 
@@ -159,7 +159,7 @@ Decision log for the pi-bench purple agent. Each entry records what was changed,
 **Decision:** 
 1. Removed Llama 4 Maverick from fallback chain. DeepSeek → GPT-4o-mini only. Reduced backoff to linear.
 2. Added `tool_choice="required"` when tools available.
-3. Added domain-specific decision trees (retail/helpdesk/finra) to system prompt, adapted from STRIDE's approach but recortados to fit our architecture.
+3. Added domain-specific Reasoning Frameworks (retail/helpdesk/finra) to system prompt. Principle-based guidance using BLOCKED/RESTRICTED/FLAGGED/CONFLICTED/PERMITTED taxonomy. Research basis: ABC (arXiv:2602.22302), ToolGuard (arXiv:2507.16459), PAE (arXiv:2603.03116).
 4. Strengthened decision rules (ALLOW vs DENY vs ESCALATE) in universal prompt.
 **Expected impact:** Latency reduced by ~50%. Decision quality improved by ~10-15%.
 
