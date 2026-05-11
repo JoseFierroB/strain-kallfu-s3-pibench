@@ -62,7 +62,7 @@ async def llm_call(
                 kwargs["api_key"] = config["api_key"]
             if tools:
                 kwargs["tools"] = tools
-                kwargs["tool_choice"] = "required"
+                kwargs["tool_choice"] = "auto"
             if seed is not None:
                 kwargs["seed"] = seed
 
